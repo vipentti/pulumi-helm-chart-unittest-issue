@@ -17,8 +17,15 @@ namespace pulumi_helm_chart_unittest_example
 
         public Task<object> CallAsync(string token, ImmutableDictionary<string, object> args, string? provider)
         {
-            // Return args as is
-            return Task.FromResult<object>(args);
+
+	    var outputs = ImmutableDictionary.CreateBuilder<string, object>();
+	    outputs.AddRange(args);
+
+	    if (token == "kubernetes:helm:template") {
+		outputs.Add("result", ImmutableArray.Create<object>());
+	    }
+
+            return Task.FromResult<object>(outputs.ToImmutable());
         }
 
         public Task<(string? id, object state)> NewResourceAsync(string type, string name, ImmutableDictionary<string, object> inputs, string? provider, string? id)
